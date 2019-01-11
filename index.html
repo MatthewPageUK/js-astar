@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<title>Javascript - A Star Path Finding Routine</title>
+		<link href="https://fonts.googleapis.com/css?family=Thasadith" rel="stylesheet">
+		<link href="css/main.css" rel="stylesheet">
+		<meta name="author" content="Matthew Page">
+	</head>
+	<body>
+		
+		
+		<h1>Javascript Path Finding with A Star</h1>
+		<div class="notes">
+		
+			<p>F = g + h</p>
+			<p>g = cost to get here</p>
+			<p>h = dist to end (Manhattan)</p>
+			<p>Manhattan distance = dist_x + dist_y
+			<p>Distance (h) = Sqrt( dist_x * dist_x + dist_y * dist_Y )</p>
+			
+			<button onclick="next();">Next Step</button>
+			
+			<h2>Usage</h2>
+			<pre>
+	myNav = new Navigator(10,10);
+	myNav.loadMap(myMap);
+	myNav.setStart(0,0);
+	myNav.setDestination(0,0);
+	myPath = myNav.findPath();
+			</pre>
+			
+			<h2>Examples</h2>
+			<p>In this example a low h weight produces a more accurate path / shortest path but will look at all the
+				nodes.</p>
+			
+			<p>A high h weight looks at fewer nodes but doesn't gurantee the shortest path, just the easiest to find.</p>
+		
+		</div>
+		<p>This is my example of the A Star (A*) pathfinding algorithm. Written in Javascript ES6 using simple coding methods.
+			Perfect for beginners and people learning the algorithm. This is an unoptimised example showing the logic not performance. </p>
+		
+
+		<div id="myGrid" class="grid"></div>
+		
+		
+		<h3>About</h3>
+		<p>By Matthew Page - <a href="http://www.mjp.co" target="_blank">www.mjp.co</a></p>
+		<p><img src="gfx/git.png"> View source code on Github</p>
+		<p>Last updated 10 Jan 2019</p>
+		<p>Public domain - any use allowed.</p>
+		
+		<script src="js/navigator.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			/**
+			 * Start here.
+			 */
+			const myMap = [
+				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+				[true,	true,	true,	true,	false,	false,	false,	false,	true,	true],
+				[true,	false,	false,	false,	false,	true,	true,	true,	true,	true],
+				[true,	true,	true,	true,	false,	true,	true,	false,	false,	false],
+				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+				[true,	true,	true,	true,	false,	true,	true,	true,	true,	true],
+				[true,	true,	true,	true,	false,	true,	true,	false,	true,	true],
+				[true,	true,	true,	true,	false,	true,	true,	false,	true,	true],
+				[true,	true,	true,	true,	false,	true,	true,	false,	true,	true],
+				[true,	true,	true,	true,	true,	true,	true,	false,	true,	true]
+			];
+			const myNav = new Navigator(10,10);
+
+			let loops = 0;
+			let path = false;
+			
+			function next() {				
+				myNav.loadMap(myMap);
+				loops += 1;
+				path=myNav.findPath(loops);
+				drawGrid();				
+			}
+				
+			function drawGrid() {
+			
+				let gridHTML = document.getElementById('myGrid');
+				gridHTML.innerHTML = "";
+				gridHTML.style.width = `${myNav.width*65}px`;
+				gridHTML.style.height = `${myNav.height*55}px`;
+
+				for(let y = 0; y < myNav.height; y++) {
+					for(let x = 0; x < myNav.width; x++) {
+
+						let node = myNav.nodesPosition[y][x];
+						if(node) {
+							let nodeHTML = document.createElement("div");
+							nodeHTML.classList.add('node');
+							if(node.isOpen) nodeHTML.classList.add('open');
+							if(node.isClosed) nodeHTML.classList.add('closed');
+							if(!node.isOpen && !node.isClosed) nodeHTML.classList.add('unkown');
+							nodeHTML.style.left = `${x*65}px`;
+							nodeHTML.style.top = `${y*55}px`;
+							nodeHTML.innerHTML = `x${x} y${y} idx${node.idx}<br><b>F${node.F}</b> g${Math.round(node.g)} h${Math.round(node.h)} O${node.isOpen} C${node.isClosed}`;
+							gridHTML.appendChild(nodeHTML);
+
+							if(x == myNav.start.x && y == myNav.start.y) {
+								nodeHTML.classList.add("start");
+							}
+							if(x == myNav.destination.x && y == myNav.destination.y) {
+								nodeHTML.classList.add("end");
+							}
+						}
+
+					}
+				}
+			}
+
+		</script>
+			
+	</body>
+</html>
