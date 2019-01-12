@@ -1,15 +1,30 @@
-body { font-family: 'Thasadith', sans-serif; margin: 0px; padding: 20px;}
-h1 { padding: 0px; margin: 0px; }
+body { font-size: 1.2em; font-family: 'Thasadith', sans-serif; margin: 0px; padding: 20px; background-image: url(../gfx/back.jpg); background-size: cover;}
+h1 { padding: 0; margin: 0 0 20px 0; color: white; font-weight: bold; font-size: 3.5em; text-shadow: 2px 2px 2px black; }
 div { position: relative; overflow: hidden; }
+p { background-color: white;
+	padding: 10px;
+	margin: 0px;
+	line-height: 1.4em;
+}
+
+#results {
+	background-color: lightpink;
+	padding: 10px;
+	border-radius: 5px;
+}
+#results.hasPath {
+	background-color: lightgreen;
+}
 
 div.notes {
 	float: right;
 	width: 400px;
 	padding: 20px;
 	box-shadow: 2px 2px 5px 0 grey;
+	background-color: white;
 }
 div.grid { 
-
+	float: left;
 }
 
 div.grid div.node { 
@@ -20,7 +35,7 @@ div.grid div.node {
 	border: 1px solid black; 
 	margin: 0 1px 1px 0; 
 	padding: 2px;
-	box-shadow: 2px 2px 5px 0 grey;
+	//box-shadow: 2px 2px 2px 0 grey;
 
 }
 div.grid div.node b {
@@ -37,12 +52,15 @@ div.grid div.node.end {
 
 
 div.grid div.node.open {
-	background-color: lightgreen;
+	background-color: white;
 }
 div.grid div.node.closed {
 	background-color: lightgrey;
 }
 div.grid div.node.unkown {
 	background-color: black;
+}
+div.grid div.node.path {
+	background-color: lightgreen;
 }
 

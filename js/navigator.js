@@ -36,6 +36,8 @@ class NavigatorNode {
 		this.parent = false;
 		this.isOpen = false;
 		this.isClosed = false;
+		
+		this.inPath = false;
 	}
 	/**
 	 * Set the node to Open (add to the open set)
@@ -171,6 +173,17 @@ class Navigator {
 				
 				/* Yes, reached the destination - woohoo */
 				console.log("FOUND PATH");
+				
+				/* Make the path */
+				while(currentNode.parent) {
+					path.push(currentNode);
+					currentNode.inPath = true;
+					currentNode = currentNode.parent;
+				}
+				/* Push the final node, start node with no parent */
+				path.push(currentNode);
+				currentNode.inPath = true;
+				
 				return path;
 			}
 

@@ -5,58 +5,241 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1">
 		<title>Javascript - A Star Path Finding Routine</title>
 		<link href="https://fonts.googleapis.com/css?family=Thasadith" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Old+Standard+TT:400i" rel="stylesheet">
 		<link href="css/main.css" rel="stylesheet">
 		<meta name="author" content="Matthew Page">
 	</head>
 	<body>
 		
 		
-		<h1>Javascript Path Finding with A Star</h1>
+		<h1>Javascript Path Finding with A* (A Star)</h1>
+		<div>
+			<div id="myGrid" class="grid"></div>
 		<div class="notes">
+				<p>This is my example of the A* (A Star) pathfinding algorithm. Written in Javascript ES6 using simple coding methods.
+			Perfect for beginners and people learning the algorithm. This is an unoptimised example showing the logic not performance. </p>
 		
-			<p>F = g + h</p>
-			<p>g = cost to get here</p>
-			<p>h = dist to end (Manhattan)</p>
-			<p>Manhattan distance = dist_x + dist_y
-			<p>Distance (h) = Sqrt( dist_x * dist_x + dist_y * dist_Y )</p>
+				<p>
+			<button onclick="next();">Next Step</button> <button onclick="play();">Play Animation</button>
+			</p>
 			
-			<button onclick="next();">Next Step</button>
 			
-			<h2>Usage</h2>
-			<pre>
+			<p>Select a heuristic weight (<i>h</i>)<br>
+				<select id="hweight" onchange="changeH()">
+					<option value="1">0 Off - Becomes Dijkstra's algorithm</option>
+					<option value="10">10 Low</option>
+					<option value="20">20 Mid</option>
+					<option value="30" selected>30 High - Efficient but not always shortest</option>
+				</select>
+			</p>
+			<p>Change maps<br>
+				<select id="maps" onchange="changeMap()">
+					<option value="0">Simple mid obstacle</option>
+					<option value="1">Walls</option>
+					<option value="2">More complex</option>
+					<option value="3">Dead ends</option>
+				</select>
+			</p>
+	
+				<div id="results">
+			
+				</div>
+		
+		</div>
+
+		
+			</div>
+<style>
+
+	div.page {
+		background-color: white;
+		padding-top: 20px;
+		margin-top: 20px;
+		box-shadow: 2px 2px 5px 0 grey;
+	}
+	div.page div.col {
+		width: 50%;
+		float: left;
+	}
+	div.page div:nth-child(2) div.inner {
+		border-left: 1px solid grey;
+	}
+	div.page div.inner {
+		padding: 0 20px 20px 20px;	
+	}
+	div.inner p {
+		padding: 0px;
+		margin: 0px 0px 20px 0px;
+		
+	}
+	
+	i { font-family: 'Old+Standard+TT', serif; font-style: italic; }
+		
+		
+</style>	
+		
+		<div class="page">
+
+			<div class="col">
+				<div class="inner">
+									
+					<h2>Wiki said...</h2>
+					<p>In computer science, A* (pronounced "A star") is a computer algorithm that is widely used in pathfinding and graph traversal, which is the process of finding a path between multiple points, called "nodes". It enjoys widespread use due to its performance and accuracy. However, in practical travel-routing systems, it is generally outperformed by algorithms which can pre-process the graph to attain better performance,[1] although other work has found A* to be superior to other approaches.[2]</p>
+
+					<p>Peter Hart, Nils Nilsson and Bertram Raphael of Stanford Research Institute (now SRI International) first published the algorithm in 1968.[3] It can be seen as an extension of Edsger Dijkstra's 1959 algorithm. A* achieves better performance by using heuristics to guide its search.</p>
+
+					<p><a href="https://en.wikipedia.org/wiki/A*_search_algorithm" target="_blank">Read more on Wikipedia</a></p>
+
+					<h2>Notes</h2>
+					<p>Start at the start node, get all it's neighbours and calculate their <i>g</i>, <i>h</i> and <i>F</i> values, add these to the 
+						'open set'. 
+						Now find the lowest <i>F</i> value node in the 'open set' and repeat the calculations on it's neighbours.
+						Keep doing this until we 
+						run out of nodes or reach the destination.</p>
+					<p><i>F = g + h</i><br><i>F = (g * gWeight) + (h * hWeight)</i></p>
+					<p><i>g</i> = Cost / distance to get here via the best path so far</p>
+					<p><i>h</i> = Distance to destination node in a straight line<br>
+						This is the heuristic value that makes this A*</p>
+					<p>Distance (<i>h</i>) = <i>Sqrt( dist_x * dist_x + dist_y * dist_Y )</i></p>
+					<p><b>Manhattan</b> no not the cocktail. This option wouldn't allow diagonal moves and <i>h</i> would be calculated <i>dist_x + dist_y</i></p>
+				</div>
+			</div>
+			
+			<div class="col">
+				<div class="inner">
+				
+
+					<h2>Weight of <i>h</i></h2>
+					<p>By adjusting the weight of the node H value you can adjust how the algorithm works. A very low <i>h</i> weight means
+					the algorithm will check all of the nodes but will find the shortest path. A very high weight means the algorithm will
+					check fewer nodes but may not find the shortest path.</p>
+					<p>A higher <i>h</i> value pulls the pathfinder towards the destination quickly, but won't allow other paths to be explored.</p>
+					<p>Implmentations of A* need to be tuned to their environment, either producing very fast and efficient results or
+					always getting the shortest path.</p>
+					<p>For my first use in a simple game any path to the goal is welcome, and I'll be keeping it efficient by having a 
+					high <i>h</i> weight.</p>
+					
+					<h2>Share it</h2>
+					<p>This is all public domain, use it any way you want.</p>
+					<p><a href="https://github.com/MatthewPageUK/js-astar" target="_blank"><img src="gfx/git.png"> View source code on Github</a></p>
+					<p>Docs here</p>
+	
+					<h2>Credits</h2>
+					<p>Thanks to all the internet people who posted the videos, articles and examples for me to learn from. Hopefully this example
+						can add to that knowledge base for future coders. Special thanks to Sebastian Lague for his <a href="https://www.youtube.com/watch?v=-L-WgKMFuhE">video</a>.</p>
+				
+					<h2>Author</h2>
+					<p>By Matthew Page - <a href="http://www.mjp.co" target="_blank">www.mjp.co</a></p>
+					<p>Last updated 10 Jan 2019</p>
+					<p>Public domain.</p>
+
+				</div>
+			</div>
+			
+
+<style>
+			
+			
+			
+			
+ 
+         .animated {
+            -webkit-animation-duration: 10s;
+            animation-duration: 10s;
+            -webkit-animation-fill-mode: both;
+            animation-fill-mode: both;
+         }
+
+         @-webkit-keyframes wobble {
+            0% { -webkit-transform: translateX(0%); }
+            15% { -webkit-transform: translateX(-5%) rotate(-10deg); }
+            30% { -webkit-transform: translateX(5%) rotate(5deg); }
+            45% { -webkit-transform: translateX(-5%) rotate(-5deg); }
+            60% { -webkit-transform: translateX(5%) rotate(2deg); }
+            75% { -webkit-transform: translateX(-5%) rotate(-1deg); }
+            100% { -webkit-transform: translateX(0%); }
+         }
+         @keyframes wobble {
+            0% { transform: translateX(0%); }
+            15% { transform: translateX(-5%) rotate(-10deg); }
+            30% { transform: translateX(5%) rotate(5deg); }
+            45% { transform: translateX(-5%) rotate(-5deg); }
+            60% { transform: translateX(5%) rotate(2deg); }
+            75% { transform: translateX(-5%) rotate(-1deg); }
+            100% { transform: translateX(0%); }
+         }
+         .wobble {
+            -webkit-animation-name: wobble;
+            animation-name: wobble;
+         }
+   
+			
+			
+			
+			</style>		
+
+
+			
+			</div>
+		
+		
+		
+		
+		
+		
+		
+		<div class="page">
+			<div class="inner">
+				<h2>Usage</h2>
+				<pre>
+&lt;script src="js/navigator.js" type="text/javascript"&gt;&lt;/script&gt; 
+&lt;script type="text/javascript"&gt;
+	const myMap = [
+		[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+		[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+		[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+		[true,	true,	true,	false,	false,	false,	true,	true,	true,	true],
+		[true,	true,	true,	false,	false,	false,	true,	true,	true,	true],
+		[true,	true,	true,	false,	false,	false,	true,	true,	true,	true],
+		[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+		[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+		[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+		[true,	true,	true,	true,	true,	true,	true,	true,	true,	true]
+	];
 	myNav = new Navigator(10,10);
 	myNav.loadMap(myMap);
 	myNav.setStart(0,0);
-	myNav.setDestination(0,0);
+	myNav.setDestination(9,9);
 	myPath = myNav.findPath();
-			</pre>
-			
-			<h2>Examples</h2>
-			<p>In this example a low h weight produces a more accurate path / shortest path but will look at all the
-				nodes.</p>
-			
-			<p>A high h weight looks at fewer nodes but doesn't gurantee the shortest path, just the easiest to find.</p>
-		
+	console.log(myPath);
+&lt;/script&gt; 
+				</pre>		
+			</div>
 		</div>
-		<p>This is my example of the A Star (A*) pathfinding algorithm. Written in Javascript ES6 using simple coding methods.
-			Perfect for beginners and people learning the algorithm. This is an unoptimised example showing the logic not performance. </p>
-		
-
-		<div id="myGrid" class="grid"></div>
 		
 		
-		<h3>About</h3>
-		<p>By Matthew Page - <a href="http://www.mjp.co" target="_blank">www.mjp.co</a></p>
-		<p><a href="https://github.com/MatthewPageUK/js-astar" target="_blank"><img src="gfx/git.png"> View source code on Github</a></p>
-		<p>Last updated 10 Jan 2019</p>
-		<p>Public domain - any use allowed.</p>
+		
+		
 		
 		<script src="js/navigator.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			/**
-			 * Start here.
+			 * All this code is to generate this demo page, this is not the A* code.
+			 * Look in ./js/navigator.js
 			 */
 			const myMap = [
+				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+				[true,	true,	true,	false,	false,	false,	true,	true,	true,	true],
+				[true,	true,	true,	false,	false,	false,	true,	true,	true,	true],
+				[true,	true,	true,	false,	false,	false,	true,	true,	true,	true],
+				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true]
+			];
+			const myMap1 = [
 				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
 				[true,	true,	true,	true,	false,	false,	false,	false,	true,	true],
 				[true,	false,	false,	false,	false,	true,	true,	true,	true,	true],
@@ -68,24 +251,98 @@
 				[true,	true,	true,	true,	false,	true,	true,	false,	true,	true],
 				[true,	true,	true,	true,	true,	true,	true,	false,	true,	true]
 			];
+			const myMap2 = [
+				[true,	true,	false,	true,	true,	false,	true,	true,	true,	true],
+				[true,	true,	false,	true,	false,	false,	true,	false,	false,	true],
+				[true,	true,	false,	true,	true,	false,	true,	true,	true,	true],
+				[true,	false,	false,	false,	true,	false,	true,	true,	true,	false],
+				[true,	true,	true,	true,	true,	false,	true,	true,	true,	true],
+				[false,	false,	true,	true,	true,	true,	true,	true,	false,	true],
+				[true,	true,	true,	false,	true,	false,	true,	true,	false,	true],
+				[true,	true,	true,	false,	true,	true,	true,	true,	false,	true],
+				[true,	true,	true,	true,	true,	true,	true,	true,	false,	true],
+				[true,	true,	true,	true,	true,	true,	true,	true,	false,	true]
+			];
+			const myMap3 = [
+				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+				[true,	true,	true,	false,	false,	false,	true,	true,	true,	true],
+				[true,	true,	true,	false,	false,	false,	true,	true,	true,	true],
+				[true,	false,	false,	false,	false,	false,	false,	false,	false,	false],
+				[true,	true,	true,	true,	true,	false,	true,	true,	true,	true],
+				[false,	false,	false,	false,	true,	false,	true,	true,	true,	true],
+				[true,	true,	true,	true,	true,	false,	true,	true,	true,	true],
+				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true]
+			];
 			const myNav = new Navigator(10,10);
+			
+			let defaultMap = myMap;
+			let defaultH = 10;
 
 			let loops = 0;
 			let path = false;
 			
+			let timer = false;
+			
+			next(); 
+			function changeH() {
+				let selectHTML = document.getElementById('hweight');
+				myNav.wh = selectHTML.value;
+				loops = 0;
+				clearInterval(timer);
+				next();
+			}
+			function changeMap() {
+			
+				let selectHTML = document.getElementById('maps');
+				if(selectHTML.value==0) defaultMap = myMap;
+				if(selectHTML.value==1) defaultMap = myMap1;
+				if(selectHTML.value==2) defaultMap = myMap2;
+				if(selectHTML.value==3) defaultMap = myMap3;
+				loops = 0;
+				clearInterval(timer);
+				next();
+				
+				
+			}
+			function play() {
+				clearInterval(timer);
+				loops = 0;
+				timer = setInterval(next, 500);
+			}
 			function next() {				
-				myNav.loadMap(myMap);
+				myNav.loadMap(defaultMap);
 				loops += 1;
 				path=myNav.findPath(loops);
-				drawGrid();				
+				drawGrid();
+				updateResults();
+				if(path.length>0) clearInterval(timer);
 			}
 				
+			function updateResults() {
+				
+				let nodesExplored = 0;
+				myNav.nodes.forEach((node)=>{
+					if(node.isOpen || node.isClosed) nodesExplored += 1;
+				});
+				let totalNodes = myNav.nodes.length;
+			
+				let resultsHTML = document.getElementById('results');
+				
+				if(path.length>0) resultsHTML.classList.add('hasPath');
+				else resultsHTML.classList.remove('hasPath');
+				let html = `Loops : ${myNav.loopCount}<br>Path length : ${path.length}<br>Nodes explored : ${nodesExplored} out of ${totalNodes}`;
+				
+				resultsHTML.innerHTML = html;
+				
+			}
 			function drawGrid() {
 			
 				let gridHTML = document.getElementById('myGrid');
 				gridHTML.innerHTML = "";
-				gridHTML.style.width = `${myNav.width*65}px`;
-				gridHTML.style.height = `${myNav.height*55}px`;
+				gridHTML.style.width = `${myNav.width*62}px`;
+				gridHTML.style.height = `${myNav.height*52}px`;
 
 				for(let y = 0; y < myNav.height; y++) {
 					for(let x = 0; x < myNav.width; x++) {
@@ -97,9 +354,14 @@
 							if(node.isOpen) nodeHTML.classList.add('open');
 							if(node.isClosed) nodeHTML.classList.add('closed');
 							if(!node.isOpen && !node.isClosed) nodeHTML.classList.add('unkown');
-							nodeHTML.style.left = `${x*65}px`;
-							nodeHTML.style.top = `${y*55}px`;
-							nodeHTML.innerHTML = `x${x} y${y} idx${node.idx}<br><b>F${node.F}</b> g${Math.round(node.g)} h${Math.round(node.h)} O${node.isOpen} C${node.isClosed}`;
+							if(node.inPath) {
+								nodeHTML.classList.add('path');
+								nodeHTML.classList.add('animated');
+								nodeHTML.classList.add('wobble');
+							}
+							nodeHTML.style.left = `${x*62}px`;
+							nodeHTML.style.top = `${y*52}px`;
+							nodeHTML.innerHTML = `x${x} y${y} idx${node.idx}<br><b>F${node.F}</b><br>g${Math.round(node.g)} h${Math.round(node.h)}`;
 							gridHTML.appendChild(nodeHTML);
 
 							if(x == myNav.start.x && y == myNav.start.y) {
