@@ -125,8 +125,10 @@ class Navigator {
 		
 		/* Setup the start node - add to the open set */
 		startNode.open();
+		
 		/* Set h to distance to destination */
 		startNode.h = startNode.distanceTo(destNode);
+		
 		/* Set g to 0, no cost to get here, we started here */
 		startNode.g = 0;
 		
