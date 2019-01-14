@@ -214,160 +214,97 @@
 
 			</div>
 		</div>
-		<script src="js/astar-pathfinder.js" type="text/javascript"></script>
+		<script src="js/astar-pathfinder-es5-dist.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			/**
 			 * All this code is to generate this demo page, this is not the A* code.
-			 * Look in ./js/astar-pathfinder.js
+			 * Look in ./js/astar-pathfinder.js - THIS HAS BEEN THROUGH BABEL 7
 			 */
-			const myMap = [
-				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
-				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
-				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
-				[true,	true,	true,	false,	false,	false,	true,	true,	true,	true],
-				[true,	true,	true,	false,	false,	false,	true,	true,	true,	true],
-				[true,	true,	true,	false,	false,	false,	true,	true,	true,	true],
-				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
-				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
-				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
-				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true]
-			];
-			const myMap1 = [
-				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
-				[true,	true,	true,	true,	false,	false,	false,	false,	true,	true],
-				[true,	false,	false,	false,	false,	true,	true,	true,	true,	true],
-				[true,	true,	true,	true,	false,	true,	true,	false,	false,	false],
-				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
-				[true,	true,	true,	true,	false,	true,	true,	true,	true,	true],
-				[true,	true,	true,	true,	false,	true,	true,	false,	true,	true],
-				[true,	true,	true,	true,	false,	true,	true,	false,	true,	true],
-				[true,	true,	true,	true,	false,	true,	true,	false,	true,	true],
-				[true,	true,	true,	true,	true,	true,	true,	false,	true,	true]
-			];
-			const myMap2 = [
-				[true,	true,	false,	true,	true,	false,	true,	true,	true,	true],
-				[true,	true,	false,	true,	false,	false,	true,	false,	false,	true],
-				[true,	true,	false,	true,	true,	false,	true,	true,	true,	true],
-				[true,	false,	false,	false,	true,	false,	true,	true,	true,	false],
-				[true,	true,	true,	true,	true,	false,	true,	true,	true,	true],
-				[false,	false,	true,	true,	true,	true,	true,	true,	false,	true],
-				[true,	true,	true,	false,	true,	false,	true,	true,	false,	true],
-				[true,	true,	true,	false,	true,	true,	true,	true,	false,	true],
-				[true,	true,	true,	true,	true,	true,	true,	true,	false,	true],
-				[true,	true,	true,	true,	true,	true,	true,	true,	false,	true]
-			];
-			const myMap3 = [
-				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
-				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
-				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
-				[true,	true,	true,	false,	false,	false,	true,	true,	true,	true],
-				[true,	true,	true,	false,	false,	false,	true,	true,	true,	true],
-				[true,	false,	false,	false,	false,	false,	false,	false,	false,	false],
-				[true,	true,	true,	true,	true,	false,	true,	true,	true,	true],
-				[false,	false,	false,	false,	true,	false,	true,	true,	true,	true],
-				[true,	true,	true,	true,	true,	false,	true,	true,	true,	true],
-				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true]
-			];
-			const myMap4 = [
-				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
-				[false,	false,	false,	false,	false,	false,	false,	false,	false,	true],
-				[true,	true,	false,	true,	true,	true,	true,	true,	false,	true],
-				[true,	true,	false,	true,	true,	false,	true,	true,	false,	true],
-				[true,	false,	true,	true,	true,	false,	true,	true,	false,	true],
-				[true,	true,	true,	true,	true,	false,	true,	true,	true,	true],
-				[true,	false,	false,	false,	false,	false,	false,	false,	false,	false],
-				[true,	false,	true,	true,	true,	true,	true,	true,	true,	true],
-				[true,	true,	true,	true,	false,	true,	true,	true,	true,	true],
-				[true,	true,	true,	true,	false,	true,	true,	true,	true,	true]
-			];
-			const myAStar = new AStarPathFinder(10,10);
-			let defaultMap = myMap;
-			let loops = 0;
-			let path = false;
-			let timer = false;
-			myAStar.setStart(0,0);
-			myAStar.setDestination(9,9);
-			next();
-			
-			function reset() {
-				loops = 0;
-				path = false;
-				clearInterval(timer);
-				next();
-			}
-			function changeH() {
-				myAStar.wh = document.getElementById('hweight').value;
-				reset();
-			}
-			function changeMap() {
-				let map = document.getElementById('maps').value;
-				if(map==0) defaultMap = myMap;
-				if(map==1) defaultMap = myMap1;
-				if(map==2) defaultMap = myMap2;
-				if(map==3) defaultMap = myMap3;
-				if(map==4) defaultMap = myMap4;
-				reset();
-			}
-			function play() {
-				reset();
-				timer = setInterval(next, 350);
-			}
-			function next() {				
-				myAStar.loadMap(defaultMap);
-				loops += 1;
-				path=myAStar.findPath(loops);
-				drawGrid();
-				updateResults();
-				if(path.length>0) clearInterval(timer);
-			}
-			function updateResults() {	
-				let nodesExplored = 0;
-				myAStar.nodes.forEach((node)=>{
-					if(node.isOpen || node.isClosed) nodesExplored += 1;
-				});
-				let totalNodes = myAStar.nodes.length;
-				let resultsHTML = document.getElementById('results');
-				resultsHTML.classList.toggle('hasPath', path.length>0);
-				let pathG = (path.length>0) ? Math.round(path[0].g) : 0;
-				resultsHTML.innerHTML = `Loops : ${myAStar.loopCount}<br>
-					Path length <i>g</i>: ${pathG} in ${path.length} steps<br>
-					Nodes explored : ${nodesExplored} out of ${totalNodes} 
-					(${Math.round((100/totalNodes)*nodesExplored)}%)`;
-			}
-			function drawGrid() {
-				let gridHTML = document.getElementById('myGrid');
-				gridHTML.innerHTML = "";
-				gridHTML.style.width = `${myAStar.width*62}px`;
-				gridHTML.style.height = `${(myAStar.height*52)-2}px`;
-				for(let y = 0; y < myAStar.height; y++) {
-					for(let x = 0; x < myAStar.width; x++) {
-						let node = myAStar.nodesPosition[y][x];
-						if(node) {
-							let nodeHTML = document.createElement("div");
-							nodeHTML.classList.add('node');
-							if(node.isOpen) nodeHTML.classList.add('open');
-							else if(node.isClosed) nodeHTML.classList.add('closed');
-							else nodeHTML.classList.add('unkown');
-							if(node.inPath) nodeHTML.classList.add('path', 'animated', 'wobble');
-							nodeHTML.style.left = `${x*62}px`;
-							nodeHTML.style.top = `${y*52}px`;
-							nodeHTML.innerHTML = `
-								<span class='x'><i>x</i>${x}</span>
-								<span class='y'><i>y</i>${y}</span>
-								<span class='F'>F${node.F}</span>
-								<span class='g'><i>g</i>${Math.round(node.g)}</span> 
-								<span class='h'><i>h</i>${Math.round(node.h)}</span>`;
-							gridHTML.appendChild(nodeHTML);
-							if(x == myAStar.start.x && y == myAStar.start.y) {
-								nodeHTML.classList.add("start");
-							}
-							if(x == myAStar.destination.x && y == myAStar.destination.y) {
-								nodeHTML.classList.add("end");
-							}
-						}
-					}
+'use strict';
+
+var myMap = [[true, true, true, true, true, true, true, true, true, true], [true, true, true, true, true, true, true, true, true, true], [true, true, true, true, true, true, true, true, true, true], [true, true, true, false, false, false, true, true, true, true], [true, true, true, false, false, false, true, true, true, true], [true, true, true, false, false, false, true, true, true, true], [true, true, true, true, true, true, true, true, true, true], [true, true, true, true, true, true, true, true, true, true], [true, true, true, true, true, true, true, true, true, true], [true, true, true, true, true, true, true, true, true, true]];
+var myMap1 = [[true, true, true, true, true, true, true, true, true, true], [true, true, true, true, false, false, false, false, true, true], [true, false, false, false, false, true, true, true, true, true], [true, true, true, true, false, true, true, false, false, false], [true, true, true, true, true, true, true, true, true, true], [true, true, true, true, false, true, true, true, true, true], [true, true, true, true, false, true, true, false, true, true], [true, true, true, true, false, true, true, false, true, true], [true, true, true, true, false, true, true, false, true, true], [true, true, true, true, true, true, true, false, true, true]];
+var myMap2 = [[true, true, false, true, true, false, true, true, true, true], [true, true, false, true, false, false, true, false, false, true], [true, true, false, true, true, false, true, true, true, true], [true, false, false, false, true, false, true, true, true, false], [true, true, true, true, true, false, true, true, true, true], [false, false, true, true, true, true, true, true, false, true], [true, true, true, false, true, false, true, true, false, true], [true, true, true, false, true, true, true, true, false, true], [true, true, true, true, true, true, true, true, false, true], [true, true, true, true, true, true, true, true, false, true]];
+var myMap3 = [[true, true, true, true, true, true, true, true, true, true], [true, true, true, true, true, true, true, true, true, true], [true, true, true, true, true, true, true, true, true, true], [true, true, true, false, false, false, true, true, true, true], [true, true, true, false, false, false, true, true, true, true], [true, false, false, false, false, false, false, false, false, false], [true, true, true, true, true, false, true, true, true, true], [false, false, false, false, true, false, true, true, true, true], [true, true, true, true, true, false, true, true, true, true], [true, true, true, true, true, true, true, true, true, true]];
+var myMap4 = [[true, true, true, true, true, true, true, true, true, true], [false, false, false, false, false, false, false, false, false, true], [true, true, false, true, true, true, true, true, false, true], [true, true, false, true, true, false, true, true, false, true], [true, false, true, true, true, false, true, true, false, true], [true, true, true, true, true, false, true, true, true, true], [true, false, false, false, false, false, false, false, false, false], [true, false, true, true, true, true, true, true, true, true], [true, true, true, true, false, true, true, true, true, true], [true, true, true, true, false, true, true, true, true, true]];
+var myAStar = new AStarPathFinder(10, 10);
+var defaultMap = myMap;
+var loops = 0;
+var path = false;
+var timer = false;
+myAStar.setStart(0, 0);
+myAStar.setDestination(9, 9);
+next();
+
+function reset() {
+	loops = 0;
+	path = false;
+	clearInterval(timer);
+	next();
+}
+function changeH() {
+	myAStar.wh = document.getElementById('hweight').value;
+	reset();
+}
+function changeMap() {
+	var map = document.getElementById('maps').value;
+	if (map == 0) defaultMap = myMap;
+	if (map == 1) defaultMap = myMap1;
+	if (map == 2) defaultMap = myMap2;
+	if (map == 3) defaultMap = myMap3;
+	if (map == 4) defaultMap = myMap4;
+	reset();
+}
+function play() {
+	reset();
+	timer = setInterval(next, 350);
+}
+function next() {
+	myAStar.loadMap(defaultMap);
+	loops += 1;
+	path = myAStar.findPath(loops);
+	drawGrid();
+	updateResults();
+	if (path.length > 0) clearInterval(timer);
+}
+function updateResults() {
+	var nodesExplored = 0;
+	myAStar.nodes.forEach(function (node) {
+		if (node.isOpen || node.isClosed) nodesExplored += 1;
+	});
+	var totalNodes = myAStar.nodes.length;
+	var resultsHTML = document.getElementById('results');
+	resultsHTML.classList.toggle('hasPath', path.length > 0);
+	var pathG = path.length > 0 ? Math.round(path[0].g) : 0;
+	resultsHTML.innerHTML = 'Loops : ' + myAStar.loopCount + '<br>\n\t\t\t\t\tPath length <i>g</i>: ' + pathG + ' in ' + path.length + ' steps<br>\n\t\t\t\t\tNodes explored : ' + nodesExplored + ' out of ' + totalNodes + ' \n\t\t\t\t\t(' + Math.round(100 / totalNodes * nodesExplored) + '%)';
+}
+function drawGrid() {
+	var gridHTML = document.getElementById('myGrid');
+	gridHTML.innerHTML = "";
+	gridHTML.style.width = myAStar.width * 62 + 'px';
+	gridHTML.style.height = myAStar.height * 52 - 2 + 'px';
+	for (var y = 0; y < myAStar.height; y++) {
+		for (var x = 0; x < myAStar.width; x++) {
+			var node = myAStar.nodesPosition[y][x];
+			if (node) {
+				var nodeHTML = document.createElement("div");
+				nodeHTML.classList.add('node');
+				if (node.isOpen) nodeHTML.classList.add('open');else if (node.isClosed) nodeHTML.classList.add('closed');else nodeHTML.classList.add('unkown');
+				if (node.inPath) nodeHTML.classList.add('path', 'animated', 'wobble');
+				nodeHTML.style.left = x * 62 + 'px';
+				nodeHTML.style.top = y * 52 + 'px';
+				nodeHTML.innerHTML = '\n\t\t\t\t\t\t\t\t<span class=\'x\'><i>x</i>' + x + '</span>\n\t\t\t\t\t\t\t\t<span class=\'y\'><i>y</i>' + y + '</span>\n\t\t\t\t\t\t\t\t<span class=\'F\'>F' + node.F + '</span>\n\t\t\t\t\t\t\t\t<span class=\'g\'><i>g</i>' + Math.round(node.g) + '</span> \n\t\t\t\t\t\t\t\t<span class=\'h\'><i>h</i>' + Math.round(node.h) + '</span>';
+				gridHTML.appendChild(nodeHTML);
+				if (x == myAStar.start.x && y == myAStar.start.y) {
+					nodeHTML.classList.add("start");
+				}
+				if (x == myAStar.destination.x && y == myAStar.destination.y) {
+					nodeHTML.classList.add("end");
 				}
 			}
+		}
+	}
+}
 		</script>
 	</body>
 </html>
