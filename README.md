@@ -1,6 +1,7 @@
 # js-astar
 
 Demo - http://mjp.co/js/astar/
+
 Documentation - http://mjp.co/js/astar/docs/
 
 A simple Javascript ES6 OO A* path finder class.
