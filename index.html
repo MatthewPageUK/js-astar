@@ -3,198 +3,165 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1">
-		<title>Javascript - A Star Path Finding Routine</title>
+		<title>Javascript - A* (A Star) Path Finding Class</title>
 		<link href="https://fonts.googleapis.com/css?family=Thasadith" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Old+Standard+TT:400i" rel="stylesheet">
 		<link href="css/main.css" rel="stylesheet">
 		<meta name="author" content="Matthew Page">
 	</head>
-	<body>
-		
-		
-		<h1>Javascript Path Finding with A* (A Star)</h1>
-		<div>
+	<body>	
+		<h1>A* (A Star) Path Finder in Javascript</h1>
+		<div class="gridWrapper">
 			<div id="myGrid" class="grid"></div>
-		<div class="notes">
-				<p>This is my example of the A* (A Star) pathfinding algorithm. Written in Javascript ES6 using simple coding methods.
-			Perfect for beginners and people learning the algorithm. This is an unoptimised example showing the logic not performance. </p>
+			<div class="notes">
+				<p>This is an example of the A* (A Star) path finding algorithm. Written in 
+					Javascript ES6 using simple OO code with plenty of comments, it is perfect 
+					for beginners and people learning the algorithm. This is an unoptimised 
+					example showing the logic and ease of use not performance.</p>
 		
 				<p>
-			<button onclick="next();">Next Step</button> <button onclick="play();">Play Animation</button>
-			</p>
-			
-			
-			<p>Select a heuristic weight (<i>h</i>)<br>
-				<select id="hweight" onchange="changeH()">
-					<option value="1">0 Off - Becomes Dijkstra's algorithm</option>
-					<option value="10">10 Low</option>
-					<option value="20">20 Mid</option>
-					<option value="30" selected>30 High - Efficient but not always shortest</option>
-				</select>
-			</p>
-			<p>Change maps<br>
-				<select id="maps" onchange="changeMap()">
-					<option value="0">Simple mid obstacle</option>
-					<option value="1">Walls</option>
-					<option value="2">More complex</option>
-					<option value="3">Dead ends</option>
-				</select>
-			</p>
-	
-				<div id="results">
-			
-				</div>
-		
-		</div>
+					<button onclick="next();">Next Step</button> 
+					<button onclick="play();">Play Animation</button> 
+					<button onclick="reset();">Reset</button>
+				</p>
 
-		
+				<p>Select a heuristic weight (<i>h</i>)<br />
+					<select id="hweight" onchange="changeH()">
+						<option value="1">0 Off - Becomes Dijkstra's algorithm</option>
+						<option value="10">10 Low</option>
+						<option value="20">20 Mid</option>
+						<option value="30" selected>30 High - Efficient but not always shortest path</option>
+					</select>
+				</p>
+				<p>Change maps<br />
+					<select id="maps" onchange="changeMap()">
+						<option value="0">Simple mid obstacle</option>
+						<option value="1">Walls</option>
+						<option value="2">More complex</option>
+						<option value="3">Dead ends</option>
+						<option value="4">Double back</option>
+					</select>
+				</p>
+				<div id="results"></div>
 			</div>
-<style>
-
-	div.page {
-		background-color: white;
-		padding-top: 20px;
-		margin-top: 20px;
-		box-shadow: 2px 2px 5px 0 grey;
-	}
-	div.page div.col {
-		width: 50%;
-		float: left;
-	}
-	div.page div:nth-child(2) div.inner {
-		border-left: 1px solid grey;
-	}
-	div.page div.inner {
-		padding: 0 20px 20px 20px;	
-	}
-	div.inner p {
-		padding: 0px;
-		margin: 0px 0px 20px 0px;
-		
-	}
-	
-	i { font-family: 'Old+Standard+TT', serif; font-style: italic; }
-		
-		
-</style>	
-		
-		<div class="page">
-
+		</div>
+		<div class="page tight">
 			<div class="col">
-				<div class="inner">
-									
+				<div class="inner">	
+					<p class="author">By Matthew Page - <a href="http://www.mjp.co" target="_blank">www.mjp.co</a><br>
+						<a href="https://www.linkedin.com/in/matthew-page-71a2a3163/" class="imgbut linkedin" target="_blank">Linked In</a> 
+						<a href="https://twitter.com/matthewpage_web" class="imgbut twitter" target="_blank">Twitter</a> 
+						<a href="https://github.com/MatthewPageUK/" class="imgbut github" target="_blank">Github</a>
+						<a href="https://www.youtube.com/user/mattandhisdog" class="imgbut youtube" target="_blank">Youtube</a>
+					</p>				
+				</div>
+			</div>
+			<div class="co2">
+				<div class="inner">	
+					<p class="codeLinks">
+						Interested in the code?<br>
+						<a href="https://github.com/MatthewPageUK/js-astar" class="imgbut github" target="_blank">Source code</a>
+						<a href="https://github.com/MatthewPageUK/js-astar" class="imgbut docs" target="_blank">Documentation</a>
+					</p>					
+				</div>
+			</div>
+			<p class="releaseNotes"><small>Last updated 10 Jan 2019. Released as Public Domain. Free to use.</small></p>
+		</div>
+		<div class="page">
+			<div class="col">
+				<div class="inner">			
 					<h2>Wiki said...</h2>
-					<p>In computer science, A* (pronounced "A star") is a computer algorithm that is widely used in pathfinding and graph traversal, which is the process of finding a path between multiple points, called "nodes". It enjoys widespread use due to its performance and accuracy. However, in practical travel-routing systems, it is generally outperformed by algorithms which can pre-process the graph to attain better performance,[1] although other work has found A* to be superior to other approaches.[2]</p>
-
-					<p>Peter Hart, Nils Nilsson and Bertram Raphael of Stanford Research Institute (now SRI International) first published the algorithm in 1968.[3] It can be seen as an extension of Edsger Dijkstra's 1959 algorithm. A* achieves better performance by using heuristics to guide its search.</p>
-
+					<p>In computer science, A* (pronounced "A star") is a computer algorithm that is widely used in 
+						pathfinding and graph traversal, which is the process of finding a path between multiple 
+						points, called "nodes". It enjoys widespread use due to its performance and accuracy. However, 
+						in practical travel-routing systems, it is generally outperformed by algorithms which can 
+						pre-process the graph to attain better performance, although other work has found A* to be 
+						superior to other approaches.</p>
+					<p>Peter Hart, Nils Nilsson and Bertram Raphael of Stanford Research Institute (now SRI International) 
+						first published the algorithm in 1968. It can be seen as an extension of Edsger Dijkstra's 1959 
+						algorithm. A* achieves better performance by using heuristics to guide its search.</p>
 					<p><a href="https://en.wikipedia.org/wiki/A*_search_algorithm" target="_blank">Read more on Wikipedia</a></p>
 
 					<h2>Notes</h2>
-					<p>Start at the start node, get all it's neighbours and calculate their <i>g</i>, <i>h</i> and <i>F</i> values, add these to the 
-						'open set'. 
-						Now find the lowest <i>F</i> value node in the 'open set' and repeat the calculations on it's neighbours.
-						Keep doing this until we 
-						run out of nodes or reach the destination.</p>
-					<p><i>F = g + h</i><br><i>F = (g * gWeight) + (h * hWeight)</i></p>
-					<p><i>g</i> = Cost / distance to get here via the best path so far</p>
-					<p><i>h</i> = Distance to destination node in a straight line<br>
-						This is the heuristic value that makes this A*</p>
-					<p>Distance (<i>h</i>) = <i>Sqrt( dist_x * dist_x + dist_y * dist_Y )</i></p>
-					<p><b>Manhattan</b> no not the cocktail. This option wouldn't allow diagonal moves and <i>h</i> would be calculated <i>dist_x + dist_y</i></p>
-				</div>
-			</div>
-			
-			<div class="col">
-				<div class="inner">
-				
-
+					<p>The basics of this algorithm are quite simple, but code examples that are highly optimised can be 
+						confusing. This is the process of the calculation.</p>
+					<p>Start at the start node, get all it's neighbours and calculate their <i>g</i>, <i>h</i> and <i>F</i> values, 
+						add these to the 'open set'. Now find the lowest <i>F</i> value node in the 'open set' and repeat the 
+						calculations on it's neighbours. Keep doing this until we  run out of nodes or reach the destination.</p>
+					<p><i>g = parent g + distance to parent</i>
+						<br>Cost or distance to get here from the start node via the best path so far</p>
+					<p><i>h = Sqrt( dist_x * dist_x + dist_y * dist_Y )</i> 
+						<br>Distance to destination node in a straight line. This is the heuristic value that makes 
+						this A* and not just Dijkstra.</p>
+					<p><i>F = g + h</i></p>
+					<p>With weights <br>
+						<i>F = (g * gWeight) + (h * hWeight)</i></p>
+					<p><b>Manhattan?</b> No not the cocktail. This option would not allow diagonal moves and <i>h</i> would be 
+						calculated <i>dist_x + dist_y</i>. I have not implemented this but worth thinking about.</p>
+					
 					<h2>Weight of <i>h</i></h2>
-					<p>By adjusting the weight of the node H value you can adjust how the algorithm works. A very low <i>h</i> weight means
-					the algorithm will check all of the nodes but will find the shortest path. A very high weight means the algorithm will
+					<p>By adjusting the weight of the node <i>h</i> value you can adjust how the algorithm works. A very low <i>h</i> weight means
+					the algorithm will check all of the nodes but will most likely find the shortest path. A very high weight means the algorithm will
 					check fewer nodes but may not find the shortest path.</p>
+					
 					<p>A higher <i>h</i> value pulls the pathfinder towards the destination quickly, but won't allow other paths to be explored.</p>
 					<p>Implmentations of A* need to be tuned to their environment, either producing very fast and efficient results or
 					always getting the shortest path.</p>
+					
 					<p>For my first use in a simple game any path to the goal is welcome, and I'll be keeping it efficient by having a 
 					high <i>h</i> weight.</p>
+	
+				</div>
+			</div>
+			<div class="col">
+				<div class="inner">
 					
-					<h2>Share it</h2>
-					<p>This is all public domain, use it any way you want.</p>
-					<p><a href="https://github.com/MatthewPageUK/js-astar" target="_blank"><img src="gfx/git.png"> View source code on Github</a></p>
-					<p>Docs here</p>
+					<h2>Optimisation</h2>
+					<p>The code here is not optimised, for every loop of the program it will look at ALL the nodes in the map and 
+					check if they are open or not. Although a simple comparison when repeated 1000's of times the script becomes 
+					very slow. My benchmark for this code is 300 nodes per second.</p>
+					
+					<h3>o1</h3>
+					<p>The first optimisation is to have an extra node array that just contains Open nodes. Now when the script looks
+					for the lowest <i>F</i> node it only needs to look in the much smaller Open array (a fraction of the size of the all nodes array).</p>
+					<p>With maybe 6 lines of extra code the performance of this routine has increased significantly to 30,000 nodes per second.
+					
+					<h3>More optimisation to come...</h3>
+					<p><b>Priority queue / binary heap : </b>In the new code we still need to find the lowest <i>F</i> node in the Open array, and
+					this is done by looking at every node in the array. Using a Priority Queue means the lowest <i>F</i> node is always
+					at the top of the queue, we can simply pull it off as we need it. There is additional processing in adding
+					and removing nodes to the queue but this is outwieghed by the gains. With a binary heap the program runs at 120,000 nodes per second.</p>
+					
+					
+					<p>Distance to neighbour is recalculated everytime through the generic distance to node function, but in reality there are 
+						only two possible values of 1 or 1.4 for the neighbour distance. This would save some math operations and a Sqrt()
+					up to 8 times on every loop - This appeared to have no effect.</p>
+
+					<p><b>Math : </b> the Javascript Math routines are reported as being a bit slow and using floating point numbers
+						will increase the processing needed. Time to look at all the Math functions and how we are using number variables. 
+						Goals is to make sure everything is an integar and use a minimum of Math calls / functions. - This appeared to have no effect</p>
+
+					<p><b>Javascript specific : </b> Is there anything specific about the way Javascript works that could improve
+						the code. Is it the most memory efficient way of dealing with the data. For example discussions about
+					    the difference in speed between using forEach or a for loop.</p>
+					
+					<p><b>Web Workers : </b> won't improve the speed of the routine, but can work in the background without
+						freezing the page. For these demos we could add a progress bar or loading icon. May also be suitable
+						for distributed processing on multiple hosts.</p>
+					
 	
 					<h2>Credits</h2>
 					<p>Thanks to all the internet people who posted the videos, articles and examples for me to learn from. Hopefully this example
 						can add to that knowledge base for future coders. Special thanks to Sebastian Lague for his <a href="https://www.youtube.com/watch?v=-L-WgKMFuhE">video</a>.</p>
 				
-					<h2>Author</h2>
-					<p>By Matthew Page - <a href="http://www.mjp.co" target="_blank">www.mjp.co</a></p>
-					<p><img src="gfx/in.png"> Linked In</p>
-					<p><img src="gfx/twit.png"> Twitter</p>
-					<p>Last updated 10 Jan 2019</p>
-					<p>Public domain.</p>
-
 				</div>
 			</div>
-			
-
-<style>
-			
-			
-			
-			
- 
-         .animated {
-            -webkit-animation-duration: 10s;
-            animation-duration: 10s;
-            -webkit-animation-fill-mode: both;
-            animation-fill-mode: both;
-         }
-
-         @-webkit-keyframes wobble {
-            0% { -webkit-transform: translateX(0%); }
-            15% { -webkit-transform: translateX(-5%) rotate(-10deg); }
-            30% { -webkit-transform: translateX(5%) rotate(5deg); }
-            45% { -webkit-transform: translateX(-5%) rotate(-5deg); }
-            60% { -webkit-transform: translateX(5%) rotate(2deg); }
-            75% { -webkit-transform: translateX(-5%) rotate(-1deg); }
-            100% { -webkit-transform: translateX(0%); }
-         }
-         @keyframes wobble {
-            0% { transform: translateX(0%); }
-            15% { transform: translateX(-5%) rotate(-10deg); }
-            30% { transform: translateX(5%) rotate(5deg); }
-            45% { transform: translateX(-5%) rotate(-5deg); }
-            60% { transform: translateX(5%) rotate(2deg); }
-            75% { transform: translateX(-5%) rotate(-1deg); }
-            100% { transform: translateX(0%); }
-         }
-         .wobble {
-            -webkit-animation-name: wobble;
-            animation-name: wobble;
-         }
-   
-			
-			
-			
-			</style>		
-
-
-			
-			</div>
-		
-		
-		
-		
-		
-		
-		
+		</div>
 		<div class="page">
 			<div class="inner">
 				<h2>Usage</h2>
 				<pre>
-&lt;script src="js/navigator.js" type="text/javascript"&gt;&lt;/script&gt; 
+&lt;script src="js/astar-pathfinder.js" type="text/javascript"&gt;&lt;/script&gt; 
 &lt;script type="text/javascript"&gt;
 	const myMap = [
 		[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
@@ -208,26 +175,21 @@
 		[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
 		[true,	true,	true,	true,	true,	true,	true,	true,	true,	true]
 	];
-	myNav = new Navigator(10,10);
-	myNav.loadMap(myMap);
-	myNav.setStart(0,0);
-	myNav.setDestination(9,9);
-	myPath = myNav.findPath();
+	myAStar = new AStarPathFinder(10,10);
+	myAStar.loadMap(myMap);
+	myAStar.setStart(0,0);
+	myAStar.setDestination(9,9);
+	let myPath = myAStar.findPath();
 	console.log(myPath);
 &lt;/script&gt; 
 				</pre>		
 			</div>
 		</div>
-		
-		
-		
-		
-		
-		<script src="js/navigator.js" type="text/javascript"></script>
+		<script src="js/astar-pathfinder.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			/**
 			 * All this code is to generate this demo page, this is not the A* code.
-			 * Look in ./js/navigator.js
+			 * Look in ./js/astar-pathfinder.js
 			 */
 			const myMap = [
 				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
@@ -277,79 +239,107 @@
 				[true,	true,	true,	true,	true,	false,	true,	true,	true,	true],
 				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true]
 			];
-			const myNav = new Navigator(10,10);
-			
+			const myMap4 = [
+				[true,	true,	true,	true,	true,	true,	true,	true,	true,	true],
+				[false,	false,	false,	false,	false,	false,	false,	false,	false,	true],
+				[true,	true,	false,	true,	true,	true,	true,	true,	false,	true],
+				[true,	true,	false,	true,	true,	false,	true,	true,	false,	true],
+				[true,	false,	true,	true,	true,	false,	true,	true,	false,	true],
+				[true,	true,	true,	true,	true,	false,	true,	true,	true,	true],
+				[true,	false,	false,	false,	false,	false,	false,	false,	false,	false],
+				[true,	false,	true,	true,	true,	true,	true,	true,	true,	true],
+				[true,	true,	true,	true,	false,	true,	true,	true,	true,	true],
+				[true,	true,	true,	true,	false,	true,	true,	true,	true,	true]
+			];
+			const myAStar = new AStarPathFinder(10,10);
+			myAStar.setStart(0,0);
+			myAStar.setDestination(9,9);
 			let defaultMap = myMap;
-			let defaultH = 10;
-
 			let loops = 0;
 			let path = false;
-			
 			let timer = false;
+			//next();
 			
-			next(); 
-			function changeH() {
-				let selectHTML = document.getElementById('hweight');
-				myNav.wh = selectHTML.value;
+			loadImageMap();
+			next();
+			
+			function reset() {
 				loops = 0;
+				path = false;
 				clearInterval(timer);
 				next();
 			}
-			function changeMap() {
+			function changeH() {
+				myAStar.wh = document.getElementById('hweight').value;
+				reset();
+			}
 			
-				let selectHTML = document.getElementById('maps');
-				if(selectHTML.value==0) defaultMap = myMap;
-				if(selectHTML.value==1) defaultMap = myMap1;
-				if(selectHTML.value==2) defaultMap = myMap2;
-				if(selectHTML.value==3) defaultMap = myMap3;
-				loops = 0;
-				clearInterval(timer);
-				next();
+			
+			function loadImageMap() {
+				
+				let img = new Image();
+				img.src = 'gfx/map10-2walls.png';
+				console.log(img);
+				let canvas = document.createElement('canvas');
+				let context = canvas.getContext('2d');
+				context.drawImage(img, 0, 0);
+				console.log(img.width);
+				for(y = 0; y < img.width; y++) {
+					
+					for(x = 0; x < img.height; x++) {
+						
+						
+						console.log(context.getImageData(x, y, 1, 1).data);
+						myMap[y][x] = ( context.getImageData(x, y, 1, 1).data[3]==255 ) ? false : true;
+						
+						
+					}
+					
+				}
 				
 				
+			}	
+			
+			function changeMap() {
+				let map = document.getElementById('maps').value;
+				if(map==0) defaultMap = myMap;
+				if(map==1) defaultMap = myMap1;
+				if(map==2) defaultMap = myMap2;
+				if(map==3) defaultMap = myMap3;
+				if(map==4) defaultMap = myMap4;
+				reset();
 			}
 			function play() {
-				clearInterval(timer);
-				loops = 0;
-				timer = setInterval(next, 500);
+				reset();
+				timer = setInterval(next, 350);
 			}
 			function next() {				
-				myNav.loadMap(defaultMap);
+				myAStar.loadMap(defaultMap);
 				loops += 1;
-				path=myNav.findPath(loops);
+				path=myAStar.findPath(loops);
 				drawGrid();
 				updateResults();
 				if(path.length>0) clearInterval(timer);
 			}
-				
-			function updateResults() {
-				
+			function updateResults() {	
 				let nodesExplored = 0;
-				myNav.nodes.forEach((node)=>{
+				myAStar.nodes.forEach((node)=>{
 					if(node.isOpen || node.isClosed) nodesExplored += 1;
 				});
-				let totalNodes = myNav.nodes.length;
-			
+				let totalNodes = myAStar.nodes.length;
 				let resultsHTML = document.getElementById('results');
-				
 				if(path.length>0) resultsHTML.classList.add('hasPath');
 				else resultsHTML.classList.remove('hasPath');
-				let html = `Loops : ${myNav.loopCount}<br>Path length : ${path.length}<br>Nodes explored : ${nodesExplored} out of ${totalNodes}`;
-				
-				resultsHTML.innerHTML = html;
-				
+				resultsHTML.innerHTML = `Loops : ${myAStar.loopCount}<br>Path length : ${path.length}<br>Nodes explored : ${nodesExplored} out of ${totalNodes}`;
 			}
 			function drawGrid() {
-			
 				let gridHTML = document.getElementById('myGrid');
 				gridHTML.innerHTML = "";
-				gridHTML.style.width = `${myNav.width*62}px`;
-				gridHTML.style.height = `${myNav.height*52}px`;
-
-				for(let y = 0; y < myNav.height; y++) {
-					for(let x = 0; x < myNav.width; x++) {
-
-						let node = myNav.nodesPosition[y][x];
+				gridHTML.style.width = `${myAStar.width*62}px`;
+				gridHTML.style.height = `${(myAStar.height*52)-2}px`;
+				for(let y = 0; y < myAStar.height; y++) {
+					for(let x = 0; x < myAStar.width; x++) {
+						let node = myAStar.nodesPosition[y][x];
 						if(node) {
 							let nodeHTML = document.createElement("div");
 							nodeHTML.classList.add('node');
@@ -363,22 +353,23 @@
 							}
 							nodeHTML.style.left = `${x*62}px`;
 							nodeHTML.style.top = `${y*52}px`;
-							nodeHTML.innerHTML = `x${x} y${y} idx${node.idx}<br><b>F${node.F}</b><br>g${Math.round(node.g)} h${Math.round(node.h)}`;
+							nodeHTML.innerHTML = `
+								<span class='x'><i>x</i>${x}</span>
+								<span class='y'><i>y</i>${y}</span>
+								<span class='F'>F${node.F}</span>
+								<span class='g'><i>g</i>${Math.round(node.g)}</span> 
+								<span class='h'><i>h</i>${Math.round(node.h)}</span>`;
 							gridHTML.appendChild(nodeHTML);
-
-							if(x == myNav.start.x && y == myNav.start.y) {
+							if(x == myAStar.start.x && y == myAStar.start.y) {
 								nodeHTML.classList.add("start");
 							}
-							if(x == myNav.destination.x && y == myNav.destination.y) {
+							if(x == myAStar.destination.x && y == myAStar.destination.y) {
 								nodeHTML.classList.add("end");
 							}
 						}
-
 					}
 				}
 			}
-
 		</script>
-			
 	</body>
 </html>
