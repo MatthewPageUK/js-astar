@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<title>Javascript - A* (A Star) Path Finding Class</title>
+		<link href="https://fonts.googleapis.com/css?family=Thasadith" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Old+Standard+TT:400i" rel="stylesheet">
+		<link href="css/main.css" rel="stylesheet">
+		<meta name="author" content="Matthew Page">
+	</head>
+	<body>	
+		<h1>A* (A Star) Path Finder in Javascript</h1>
+		<div style="position: relative; width: 1010px; height: 1010px; margin: 0 auto 0 auto;">
+		<canvas id="mapCanvas" style="border: 5px solid green;"></canvas>
+			</div>
+		<div class="page">
+			<div class="inner">			
+
+				
+				
+				<div id="results1"></div>
+				
+				<h2>Performance demo</h2>
+				<p>This demo uses the o1 code with the improved Open set array sorting. The map is 1000 x 1000 nodes and fairly complex. Sometimes
+				the map is unsolvable, or it can take 1 - minutes to solve some maps.</p>
+				<p>This A* has quite a high <i>h</i> weight to keep the path heading towards the destination. It will not find the shortest
+				path but will get to the answer quicker.</p>
+					
+			</div>
+		</div>
+		<script src="../../Pirates/noisejs-master/perlin.js" type="text/javascript"></script>
+		<script src="js/astar-pathfinder-o2.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			/**
+			 * Make a big map
+			 */
+			const mapW = 1000;
+			const mapH = 1000;
+			const map = [];
+			const hWeight = 30;
+			for(let y = 0; y < mapH; y++) {
+				map[y] = [];
+				for(let x = 0; x < mapW; x++) {
+					map[y][x] = true;
+				}
+			}
+			
+			const scale = 1;
+			
+			
+			
+			
+			/* makeNoiseMap() { */
+				//noise.seed(Math.random());
+				noise.seed(0.3);
+				for (var x = 0; x < mapW; x++) {
+					for (var y = 0; y < mapH; y++) {
+						var value = Math.abs(noise.perlin2(x/30, y/30));
+						value *= 256;
+						//if(x < mapW - 10 && y < mapH - 10 && y > 10 && x > 10) {
+							if(value > 55 ) {
+								map[y][x] = false; // Beach
+							} else {
+								map[y][x] = true; // Ocean
+							}
+						//} else {
+						//	map[y][x] = true; // start / end corners	
+						//}
+					}
+				}	
+
+				// noise.seed(Math.random());
+				noise.seed(0.3);
+				for (var x = 0; x < mapW; x++) {
+					for (var y = 0; y < mapH; y++) {
+						var value = Math.abs(noise.perlin2(x/300, y/300));
+						value *= 256;
+						//if(x < mapW - 10 && y < mapH - 10 && y > 10 && x > 10) {
+							if(value > 85 ) {
+								map[y][x] = false; // Beach
+							} else {
+								// map[y][x] = true; // Ocean
+							}
+						//} else {
+						//	map[y][x] = true; // start / end corners	
+						//}
+					}
+				}
+			
+				for(let y=0; y<50; y++) {
+					for(let x=0; x<50; x++) {
+						map[y][x] = true;
+						map[mapH-y-1][mapW-x-1] = true;
+					}
+				}
+					
+			/* Add some random blocks 
+			for(let b = 0; b < 60; b++) { 
+				let posx = Math.floor( ( Math.random()*(mapW-(mapW/5) ) +(mapW/10)));
+				let posy = Math.floor( ( Math.random()*(mapH-(mapH/5) ) +(mapW/10)));
+				for(let x1 = 0; x1 < mapW/10; x1++) { 
+					for(let y1 = 0; y1 < mapW/10; y1++) { 
+						if(posy+y1 < mapH && posx+x1 < mapW) {
+							map[posy+y1][posx+x1] = false;
+						}
+					}
+				}
+			}*/
+
+			/* Setup A* */
+			let myAStar = new AStarPathFinder(mapW,mapH);
+			let path = [];
+			let timer1 = 0;
+			let timer2 = 0;
+			myAStar.setStart(0,0);
+			myAStar.setDestination(mapW-1,mapH-1);
+			myAStar.wh = hWeight;
+			myAStar.loadMap(map);
+			
+			const mapCanvas = document.getElementById("mapCanvas");
+			mapCanvas.width = mapW*scale;
+			mapCanvas.height = mapH*scale;
+			mapCtx = mapCanvas.getContext("2d");
+			
+			mapCanvas.addEventListener("mousedown", function (e) { clickMap(e);});
+			
+			findPath();
+			drawMap();
+			updateResults();
+
+			function clickMap(e) {
+				if( myAStar.nodesPosition[e.offsetY][e.offsetX] ) {
+					myAStar = new AStarPathFinder(mapW,mapH);
+					path = [];
+					myAStar.setStart(0,0);
+					myAStar.setDestination( e.offsetX, e.offsetY );
+					myAStar.wh = hWeight;
+					myAStar.loadMap(map);
+					findPath();
+					drawMap();
+					updateResults();
+				} else {
+					mapCanvas.classList.add("oops");
+					setTimeout(() => { mapCanvas.classList.remove("oops"); } , 500);
+				}
+			}
+			
+/*			
+function getCursorPosition(canvas, event) {
+    var rect = canvas.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
+    console.log("x: " + x + " y: " + y);
+}
+*/			
+			
+			function updateResults() {
+				let nodesExplored = 0;
+				myAStar.nodes.forEach((node)=>{
+					if(node.isOpen || node.isClosed) nodesExplored += 1;
+				});
+				let totalNodes = myAStar.nodes.length;
+				let resultsHTML = document.getElementById('results1');
+				if(path.length>0) resultsHTML.classList.add('hasPath');
+				else resultsHTML.classList.remove('hasPath');
+				resultsHTML.innerHTML = `
+					Map size : ${mapW} x ${mapH}
+					<br>Total map nodes : ${mapW*mapH}
+					<br>Loops : ${myAStar.loopCount}<br>Path length : ${path.length} nodes.
+					<br>Nodes explored : ${nodesExplored} out of ${totalNodes}.
+					<br>${Math.floor( (100/totalNodes)*nodesExplored)}% of all nodes explored.
+					<br>Time taken : ${Math.floor(timer2-timer1)}ms.
+					<br>Nodes per second = ${(nodesExplored/(timer2-timer1))*1000}`;
+			}
+			function findPath() {
+				timer1 = performance.now();
+				path=myAStar.findPath(9999999);
+				timer2 = performance.now();
+			}
+			function drawMap() {
+				mapCtx.clearRect(0,0,mapW, mapH);
+				for(let y = 0; y < mapH; y++) {
+					for(let x = 0; x < mapW; x++) {
+						if( myAStar.nodesPosition[y][x] ) {
+
+							if(myAStar.nodesPosition[y][x].inPath) {
+								mapCtx.fillStyle = 'red';
+								mapCtx.fillRect(x*scale, y*scale, 3*scale, 3*scale);
+							} else if(myAStar.nodesPosition[y][x].isOpen) {
+								mapCtx.fillStyle = 'lightgrey';
+								mapCtx.fillRect(x*scale, y*scale, 1*scale, 1*scale);
+							} else if(myAStar.nodesPosition[y][x].isClosed) {
+								mapCtx.fillStyle = 'lightgrey';
+								mapCtx.fillRect(x*scale, y*scale, 1*scale, 1*scale);
+							} else {
+								mapCtx.fillStyle = 'lightyellow';
+								mapCtx.fillRect(x*scale, y*scale, 1*scale, 1*scale);
+							}		
+						} else {
+							//mapCtx.fillStyle = 'grey';
+							//mapCtx.fillRect(x*scale, y*scale, 1*scale, 1*scale);
+						}
+					}
+				}
+				for(let y = 0; y < mapH; y++) {
+					for(let x = 0; x < mapW; x++) {
+						if( myAStar.nodesPosition[y][x] ) {
+
+							if(myAStar.nodesPosition[y][x].inPath) {
+								mapCtx.fillStyle = 'red';
+								mapCtx.fillRect(x*scale, y*scale, 3*scale, 3*scale);
+							}
+						}
+					}
+				}
+			}
+		</script>
+	</body>
+</html>

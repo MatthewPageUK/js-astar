@@ -41,6 +41,8 @@ div.gridWrapper {
 	grid-gap: 10px;
 }
 div.grid { }
+canvas { }
+canvas.oops { border: 5px solid red !important; }
 div.node { 
 	font-size: 0.6em;
 	background-color: white; 
