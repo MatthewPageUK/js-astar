@@ -10,22 +10,51 @@
 		<meta name="author" content="Matthew Page">
 	</head>
 	<body>	
-		<h1>A* (A Star) Path Finder in Javascript</h1>
-		<div style="position: relative; width: 1010px; height: 1010px; margin: 0 auto 0 auto;">
-		<canvas id="mapCanvas" style="border: 5px solid green;"></canvas>
-			</div>
-		<div class="page">
+		<style>
+			body { background-image: none; background-color: cornflowerblue; }
+			canvas { position: absolute; top: 0px; left: 0px; z-index: 100; }
+			div.demo-p-info {
+				position: absolute;
+				overflow: hidden;
+				width: 200px;
+				height: 450px;
+				top: 10px;
+				right: 10px;
+				font-size: 0.8rem;
+				background-color: rgba(255,255,255,0.9);
+				padding: 20px;
+				z-index: 1000;
+			}
+			#calculating {
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				width: 200px;
+				height: 60px;
+				padding: 20px;
+				background-color: firebrick;
+				color: white;
+				border-radius: 5px;
+				z-index: 1001;
+			}
+		</style>
+		<canvas id="mapCanvas"></canvas>
+		<div id="calculating">Calulating Path...</div>
+		<div class="demo-p-info">
 			<div class="inner">			
-
-				
-				
-				<div id="results1"></div>
-				
 				<h2>Performance demo</h2>
+				<div id="results1"></div>
+				<p><select id="hWeight">
+					<option value="40">40 - High, fastest calculation</option>
+					<option value="20">20</option>
+					<option value="10" selected>10</option>
+					<option value="0">0 - Off, guarantee shortest path</option>
+				</select></p>
 				<p>This demo uses the o1 code with the improved Open set array sorting. The map is 1000 x 1000 nodes and fairly complex. Sometimes
 				the map is unsolvable, or it can take 1 - minutes to solve some maps.</p>
 				<p>This A* has quite a high <i>h</i> weight to keep the path heading towards the destination. It will not find the shortest
 				path but will get to the answer quicker.</p>
+				<p><a href="./index.html">Back</a></p>
 					
 			</div>
 		</div>
@@ -35,10 +64,10 @@
 			/**
 			 * Make a big map
 			 */
-			const mapW = 1000;
-			const mapH = 1000;
+			const mapW = window.innerWidth;
+			const mapH = window.innerHeight;
 			const map = [];
-			const hWeight = 30;
+			let hWeight = document.getElementById('hWeight').value;
 			for(let y = 0; y < mapH; y++) {
 				map[y] = [];
 				for(let x = 0; x < mapW; x++) {
@@ -131,15 +160,19 @@
 
 			function clickMap(e) {
 				if( myAStar.nodesPosition[e.offsetY][e.offsetX] ) {
+					document.getElementById("calculating").style.display = "block";
+					console.log(document.getElementById("calculating").style.display, performance.now());
 					myAStar = new AStarPathFinder(mapW,mapH);
 					path = [];
 					myAStar.setStart(0,0);
 					myAStar.setDestination( e.offsetX, e.offsetY );
-					myAStar.wh = hWeight;
+					myAStar.wh = document.getElementById('hWeight').value;
 					myAStar.loadMap(map);
 					findPath();
 					drawMap();
 					updateResults();
+					document.getElementById("calculating").style.display = "none";
+					console.log(document.getElementById("calculating").style.display, performance.now());
 				} else {
 					mapCanvas.classList.add("oops");
 					setTimeout(() => { mapCanvas.classList.remove("oops"); } , 500);
@@ -156,6 +189,7 @@ function getCursorPosition(canvas, event) {
 */			
 			
 			function updateResults() {
+
 				let nodesExplored = 0;
 				myAStar.nodes.forEach((node)=>{
 					if(node.isOpen || node.isClosed) nodesExplored += 1;
@@ -188,13 +222,13 @@ function getCursorPosition(canvas, event) {
 								mapCtx.fillStyle = 'red';
 								mapCtx.fillRect(x*scale, y*scale, 3*scale, 3*scale);
 							} else if(myAStar.nodesPosition[y][x].isOpen) {
-								mapCtx.fillStyle = 'lightgrey';
+								mapCtx.fillStyle = 'green';
 								mapCtx.fillRect(x*scale, y*scale, 1*scale, 1*scale);
 							} else if(myAStar.nodesPosition[y][x].isClosed) {
-								mapCtx.fillStyle = 'lightgrey';
+								mapCtx.fillStyle = 'green';
 								mapCtx.fillRect(x*scale, y*scale, 1*scale, 1*scale);
 							} else {
-								mapCtx.fillStyle = 'lightyellow';
+								mapCtx.fillStyle = 'yellow';
 								mapCtx.fillRect(x*scale, y*scale, 1*scale, 1*scale);
 							}		
 						} else {

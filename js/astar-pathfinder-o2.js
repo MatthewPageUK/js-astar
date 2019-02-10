@@ -45,12 +45,12 @@ class AStarBinaryHeap {
 	 * @param {AStarNode} AStarNode to be removed
 	 */
 	removeNode(node) {
-		let length = this.nodes.length;
-		for (var i = 0; i < length; i++) {
+
+		for (let i = 0; i < this.nodes.length; i++) {
 			if (this.nodes[i] != node) continue;
 
 			var end = this.nodes.pop();
-			if (i == length - 1) break;
+			if (i == this.nodes.length - 1) break;
 			this.nodes[i] = end;
 			this.bubbleUp(i);
 			this.sinkDown(i);
@@ -125,6 +125,13 @@ class AStarBinaryHeap {
 			n = swap;
 		}
 	}
+	/**
+	 * Reset the heap, basically empty iy.
+	 *
+	 */
+	reset() {
+		this.nodes = [];
+	}
 }
 
 
@@ -147,7 +154,6 @@ class AStarBinaryHeap {
  * @property {boolean} isOpen - Is the node Open (in the open set), candidate to be looked at
  * @property {boolean} isClosed - Is the node Closed (in the closed set), finished with this node
  * @property {boolean} inPath - Is this node in the final path, only set once the path is found
- * @property {number} openSetIndex - This nodes position in the Open set array, useful for removing the node. [o1]
  */
 class AStarNode {
 	/**
@@ -167,8 +173,6 @@ class AStarNode {
 		this.isOpen = false;
 		this.isClosed = false;
 		this.inPath = false;
-		/* o1 - store position in the openSets array */
-		this.openSetIndex = 0;
 	}
 	/**
 	 * Set the node to Open (we may want to explore this node later)
@@ -200,27 +204,22 @@ class AStarNode {
 	distanceTo(dest) {
 		let x = Math.abs(this.x - dest.x);
 		let y = Math.abs(this.y - dest.y);
-		// o3 - appears to be no help
-		//if(x==1 && y==1) return 1.4;
-		//if((x==1 && y==0) || (x==0 && y==1)) return 1;
-		
-		// o4 - sqrt lookup - does nothing to help
-		// let d = tmpSqrt[x][y];
-		
 		let d = Math.sqrt((x*x)+(y*y));
 		return d;
 	}
-}
-
-/* o4 - sqrt lookup
-let tmpSqrt = [];
-for(x = 0; x < 1000; x++) {
-	tmpSqrt[x] = [];
-	for(y = 0; y < 1000; y++) {
-		tmpSqrt[x][y] = Math.sqrt((x*x)+(y*y));
+	/**
+	 * Reset this node to its default settings of g, h, parent etc.
+	 *
+	 */
+	reset() {
+		this.g = 0;
+		this.h = 0;
+		this.parent = false;
+		this.isOpen = false;
+		this.isClosed = false;
+		this.inPath = false;
 	}
-} *
-
+}
 /**
  * An A* path finder. This class implements the A* path finding algorithm. It is not optimised for efficiency
  * but is designed for ease of reading and use.
@@ -242,7 +241,7 @@ for(x = 0; x < 1000; x++) {
  * @property {number} wg - g weight, the g value will be multiplied by this, tweak the algorithm to your needs
  * @property {number} wh - h weight, the h value will be multiplied by this, tweak the algorithm to your needs
  * @property {AStarNode[]} path - The final path if one is found, array of nodes from start to destination
- * @property {AStarNode[]} openSet - The set of nodes that are currently Open [o1]
+ * @property {AStarNode[]} openSet - The set of nodes that are currently Open in a binary heap
  */
 class AStarPathFinder {
 	/**
@@ -262,10 +261,19 @@ class AStarPathFinder {
 		/* Default weights for g and h - tweak these to get more accurate or efficient results */
 		this.wg = 10;
 		this.wh = 30;
-		/* o1 - Add a new openSet array so we don't need to search all nodes when finding the lowest F
-		this.openSet = []; */
-		/* o2 - Now a binary heap object */
 		this.openSet = new AStarBinaryHeap();
+	}
+	/**
+	 * Reset the path but keep the map.
+	 *
+	 */
+	reset() {
+		this.start = false;
+		this.destination = false;
+		this.openSet.reset();
+		this.nodes.forEach((node)=>{
+			node.reset();
+		});
 	}
 	/**
 	 * Main path finding loop - call this to get a path back. This is the main logic of the 
@@ -332,25 +340,15 @@ class AStarPathFinder {
 					
 					/* Parent of neighbour is set to the current node */
 					neighbour.parent = currentNode;
-
-					/* o1 - add to openSet 
-					neighbour.openSetIndex = this.openSet.length;
-					this.openSet.push(neighbour); */
 					
 					/* o2 - add to the binary heap */
 					this.openSet.addNode(neighbour);
-					
 				}
-				
 			});
 			
 			/* Close the current node, we're done with it and have new open candidates to look at */
 			currentNode.close();
-			
-			/* o1 - remove from openSet 
-			this.openSet.splice(currentNode.openSetIndex, 1);
-			currentNode.openSetIndex = -1; */
-			
+						
 			/* o2 - Remove the node from the open set binary heap */
 			this.openSet.removeNode(currentNode);
 
@@ -400,37 +398,8 @@ class AStarPathFinder {
 	 * @returns {Node} Single open node with lowest F value out of all open nodes
 	 */
 	lowestFOpenNode() {
-		
 		/* o2 - Get the lowest F from the binary heap */
 		return (this.openSet.getLowestFNode());
-		
-		let lowestFNode = false;
-		/* Each of the nodes in all nodes - bad for efficiency 
-		this.nodes.forEach((node)=>{ */
-		
-		/* o1 - Each of the nodes in the openSet, much nicer */
-		this.openSet.forEach((node)=>{
-			
-			/* Only check open nodes */
-			if(node.isOpen) {				
-				if(!lowestFNode) {
-					
-					/* Lowest node hasn't been set yet - set to this node */
-					lowestFNode = node;
-				} else if(node.F < lowestFNode.F) {
-					
-					/* This node F is lower than lowest F Node - set to this node */
-					lowestFNode = node;
-				} else if(node.F == lowestFNode.F) {	
-					
-					/* Have the same F value, compare the h value, pick one closer to the destination. Fiddle with this.. */
-					if(node.h <= lowestFNode.h) {						
-						lowestFNode = node;
-					}
-				}
-			}
-		});
-		return(lowestFNode);
 	}
 	/**
 	 * Load the map array[y][x] 

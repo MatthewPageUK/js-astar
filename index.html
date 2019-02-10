@@ -280,13 +280,22 @@
 				[true,	true,	true,	true,	false,	true,	true,	true,	true,	true],
 				[true,	true,	true,	true,	false,	true,	true,	true,	true,	true]
 			];
-			const myAStar = new AStarPathFinder(10,10);
+			const gridWidth = 10;
+			const gridHeight = 10;
+			const nodeWidth = Math.min(Math.floor((window.innerWidth-55)/gridWidth), 62);
+			const nodeHeight = Math.min(52, 52);
+			
+			
+			
+			
+			
+			const myAStar = new AStarPathFinder(gridWidth, gridHeight);
 			let defaultMap = myMap;
 			let loops = 0;
 			let path = false;
 			let timer = false;
 			myAStar.setStart(0,0);
-			myAStar.setDestination(9,9);
+			myAStar.setDestination(gridWidth-1, gridHeight-1);
 			next();
 			
 			function reset() {
@@ -337,8 +346,8 @@
 			function drawGrid() {
 				let gridHTML = document.getElementById('myGrid');
 				gridHTML.innerHTML = "";
-				gridHTML.style.width = `${myAStar.width*62}px`;
-				gridHTML.style.height = `${(myAStar.height*52)-2}px`;
+				gridHTML.style.width = `${myAStar.width*nodeWidth}px`;
+				gridHTML.style.height = `${(myAStar.height*nodeHeight)-2}px`;
 				for(let y = 0; y < myAStar.height; y++) {
 					for(let x = 0; x < myAStar.width; x++) {
 						let node = myAStar.nodesPosition[y][x];
@@ -349,8 +358,9 @@
 							else if(node.isClosed) nodeHTML.classList.add('closed');
 							else nodeHTML.classList.add('unkown');
 							if(node.inPath) nodeHTML.classList.add('path', 'animated', 'wobble');
-							nodeHTML.style.left = `${x*62}px`;
-							nodeHTML.style.top = `${y*52}px`;
+							nodeHTML.style.left = `${x*nodeWidth}px`;
+							nodeHTML.style.top = `${y*nodeHeight}px`;
+							nodeHTML.style.width = `${nodeWidth-6}px`;
 							nodeHTML.innerHTML = `
 								<span class='x'><i>x</i>${x}</span>
 								<span class='y'><i>y</i>${y}</span>
