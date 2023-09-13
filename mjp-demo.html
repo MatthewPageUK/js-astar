@@ -100,10 +100,10 @@
 					this.zombie.path.forEach((step)=>{
 
                         if (this.zombie.positionOnPath > stepCount) {
-                            this.pathCtx.fillStyle = "rgba(0, 0, 255, 0.2)";
+                            this.pathCtx.fillStyle = "rgba(255, 0, 255, 0.2)";
                             stepCount += 1;
                         } else {
-                            this.pathCtx.fillStyle = "rgba(0, 0, 255, 1)";
+                            this.pathCtx.fillStyle = "rgba(255, 0, 255, 1)";
                         }
 
 						this.pathCtx.fillRect(step.x, step.y, 3, 3);
