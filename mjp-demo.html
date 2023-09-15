@@ -20,7 +20,7 @@
 		</div>
 		<script src="demo-perlin.js" type="text/javascript"></script>
 		<script src="js/astar-pathfinder-o2.js" type="text/javascript"></script>
-		<script src="maze6.js" type="text/javascript"></script>
+		<script src="maze3.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			class Player {
 				constructor(game) {
@@ -80,8 +80,8 @@
 			}
 			class Game {
 				constructor() {
-					this.width = 728; // window.innerWidth;
-					this.height = 371; //window.innerHeight;
+					this.width = 640; // window.innerWidth;
+					this.height = 484; //window.innerHeight;
 					this.map = [];
 					this.makeMap();
 					this.timer1 = 0;
@@ -106,17 +106,17 @@
 					this.zombie.path.forEach((step)=>{
 
                         if (this.zombie.positionOnPath > stepCount) {
-                            this.pathCtx.fillStyle = "rgba(255, 0, 255, 0.2)";
+                            this.pathCtx.fillStyle = "rgba(255, 0, 0, 0.2)";
                             stepCount += 1;
                         } else {
-                            this.pathCtx.fillStyle = "rgba(255, 0, 255, 1)";
+                            this.pathCtx.fillStyle = "rgba(255, 0, 0, 1)";
                         }
 
 						this.pathCtx.fillRect(step.x * scale, step.y * scale, 1 * scale, 1 * scale);
 					});
 					this.pathCtx.fillStyle = "red";
 					this.pathCtx.fillRect((this.zombie.x * scale) - 10, (this.zombie.y * scale) - 10, 20, 20);
-					this.pathCtx.fillStyle = "green";
+					this.pathCtx.fillStyle = "white";
 					this.pathCtx.fillRect((this.player.x * scale) - 10, (this.player.y * scale) - 10, 20, 20);
 				}
 				update() {
