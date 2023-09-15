@@ -10,8 +10,8 @@
 		<meta name="author" content="Matthew Page">
 	</head>
 	<body>
-		<canvas id="mapCanvas"></canvas>
-		<canvas id="pathCanvas"></canvas>
+		<canvas id="mapCanvas" XXstyle="width: 642px; height: 482px;"></canvas>
+		<canvas id="pathCanvas" XXstyle="width: 642px; height: 482px;"></canvas>
 		<div class="demo-p-info">
 			<div class="inner">
 				<h1>Javascript A* Realtime demo</h1>
@@ -20,6 +20,7 @@
 		</div>
 		<script src="demo-perlin.js" type="text/javascript"></script>
 		<script src="js/astar-pathfinder-o2.js" type="text/javascript"></script>
+		<script src="maze5.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			class Player {
 				constructor(game) {
@@ -28,6 +29,9 @@
 					this.y = this.game.height-5;
 				}
 				moveTo(x, y) {
+					let scale = window.innerWidth / this.game.width;
+					x = Math.floor(x / scale);
+					y = Math.floor(y / scale);
 					if(this.game.map[y][x]) {
 						this.x = x;
 						this.y = y;
@@ -76,26 +80,28 @@
 			}
 			class Game {
 				constructor() {
-					this.width = window.innerWidth;
-					this.height = window.innerHeight;
+					this.width = 642; // window.innerWidth;
+					this.height = 402; //window.innerHeight;
 					this.map = [];
 					this.makeMap();
 					this.timer1 = 0;
 					this.timer2 = 0;
 					this.player = new Player(this);
-					this.zombie = new Zombie(this, this.player, 5, 5);
+					this.zombie = new Zombie(this, this.player, 211, 211);
 					this.mapCanvas = document.getElementById("mapCanvas");
 					this.pathCanvas = document.getElementById("pathCanvas");
-					this.mapCanvas.width = this.width;
-					this.mapCanvas.height = this.height;
+					this.mapCanvas.width = window.innerWidth; // this.width;
+					this.mapCanvas.height = window.innerHeight; //this.height;
 					this.mapCtx = this.mapCanvas.getContext("2d");
-					this.pathCanvas.width = this.width;
-					this.pathCanvas.height = this.height;
+					this.pathCanvas.width = window.innerWidth; // this.width;
+					this.pathCanvas.height = window.innerHeight; // this.height;
 					this.pathCtx = this.pathCanvas.getContext("2d");
 					this.drawMap()
 				}
 				drawPath() {
-					this.pathCtx.clearRect(0, 0, this.width, this.height);
+					let scale = window.innerWidth / this.width;
+
+					this.pathCtx.clearRect(0, 0, this.width * scale, this.height * scale);
                     let stepCount = 0;
 					this.zombie.path.forEach((step)=>{
 
@@ -106,12 +112,12 @@
                             this.pathCtx.fillStyle = "rgba(255, 0, 255, 1)";
                         }
 
-						this.pathCtx.fillRect(step.x, step.y, 3, 3);
+						this.pathCtx.fillRect(step.x * scale, step.y * scale, 1 * scale, 1 * scale);
 					});
 					this.pathCtx.fillStyle = "red";
-					this.pathCtx.fillRect(this.zombie.x-10, this.zombie.y-10, 20, 20);
+					this.pathCtx.fillRect((this.zombie.x * scale) - 10, (this.zombie.y * scale) - 10, 20, 20);
 					this.pathCtx.fillStyle = "green";
-					this.pathCtx.fillRect(this.player.x-10, this.player.y-10, 20, 20);
+					this.pathCtx.fillRect((this.player.x * scale) - 10, (this.player.y * scale) - 10, 20, 20);
 				}
 				update() {
 					this.zombie.move();
@@ -120,34 +126,70 @@
 					setTimeout(() => this.update(), 100);
 				}
 				drawMap() {
-					this.mapCtx.clearRect(0,0, this.width, this.height);
+					let scale = window.innerWidth / this.width;
+
+					this.mapCtx.clearRect(0, 0, this.width * scale, this.height * scale);
 					for(let y = 0; y < this.height; y++) {
 						for(let x = 0; x < this.width; x++) {
-							if( this.map[y][x] ) {
+							if (! this.map[y][x]) {
 								this.mapCtx.fillStyle = "#fbbf24";
-								this.mapCtx.fillRect(x, y, 1, 1);
+								this.mapCtx.fillRect(x * scale, y * scale, 1 * scale, 1 * scale);
 							}
 						}
 					}
 				}
 				makeMap() {
-					for(let y = 0; y < this.height; y++) {
-						this.map[y] = [];
-						for(let x = 0; x < this.width; x++) this.map[y][x] = true;
-					}
-					noise.seed(Math.random());
-					for (var x = 0; x < this.width; x++) {
-						for (var y = 0; y < this.height; y++) {
-							var value = Math.abs(noise.perlin2(x/30, y/30))*256;
-							if(value > 55 ) this.map[y][x] = false;
-						}
-					}
-					for(let y=0; y<50; y++) {
-						for(let x=0; x<50; x++) {
-							this.map[y][x] = true;
-							this.map[this.height-y-1][this.width-x-1] = true;
-						}
-					}
+					// for(let y = 0; y < this.height; y++) {
+					// 	this.map[y] = [];
+					// 	for(let x = 0; x < this.width; x++) this.map[y][x] = true;
+					// }
+					// noise.seed(Math.random());
+					// for (var x = 0; x < this.width; x++) {
+					// 	for (var y = 0; y < this.height; y++) {
+					// 		var value = Math.abs(noise.perlin2(x/30, y/30))*256;
+					// 		if(value > 55 ) this.map[y][x] = false;
+					// 	}
+					// }
+					// for(let y=0; y<50; y++) {
+					// 	for(let x=0; x<50; x++) {
+					// 		this.map[y][x] = true;
+					// 		this.map[this.height-y-1][this.width-x-1] = true;
+					// 	}
+					// }
+
+
+
+
+
+
+// // Create an XMLHttpRequest object to load the JavaScript file.
+// var xhr = new XMLHttpRequest();
+// xhr.open('GET', 'maze1.js', true);
+
+// xhr.onreadystatechange = function () {
+//     if (xhr.readyState === 4 && xhr.status === 200) {
+//         // The file is successfully loaded.
+//         var jsCode = xhr.responseText;
+
+//         // Use an immediately invoked function expression (IIFE) to execute the loaded code.
+//         (function () {
+//             eval(jsCode); // This will define the 'imageArray' variable.
+//         })();
+
+//         // Now, you can access the 'imageArray' variable in your JavaScript code.
+
+//         // You can manipulate the 'imageArray' as needed.
+//     }
+// };
+
+// // Send the request to load the JavaScript file.
+// xhr.send();
+
+this.map = imageArray;
+
+
+
+
 				}
 				updateInfo() {
                     let nodesExplored = 0;
