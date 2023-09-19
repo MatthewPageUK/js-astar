@@ -25,7 +25,7 @@
 		</div>
 		<!-- <script src="demo-perlin.js" type="text/javascript"></script> -->
 		<script src="js/astar-pathfinder-o2.js" type="text/javascript"></script>
-		<script src="rect-maze.js" type="text/javascript"></script>
+		<script src="circle-maze.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			class Player {
 				constructor(game) {
@@ -92,7 +92,7 @@
 					this.timer1 = 0;
 					this.timer2 = 0;
 					this.player = new Player(this);
-					this.zombie = new Zombie(this, this.player, 211, 211);
+					this.zombie = new Zombie(this, this.player, 300, 165);
 					this.mapCanvas = document.getElementById("mapCanvas");
 					this.pathCanvas = document.getElementById("pathCanvas");
 					this.mapCanvas.width = window.innerWidth; // this.width;

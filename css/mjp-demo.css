@@ -10,7 +10,7 @@ div.demo-p-info {
 	position: absolute;
 	overflow: hidden;
 	width: 200px;
-	height: 450px;
+	height: auto;
 	top: 10px;
 	right: 10px;
 	font-size: 0.85rem;
@@ -27,4 +27,27 @@ h1 {
 }
 #results {
 	position: relative;
+}
+ul {
+	margin-left: 15px;
+	padding: 0px;
+	font-size: 1rem;
+}
+a {
+	color: #fbbf24;
+}
+a:visited {
+	color: #fbbf24;
+}
+a:hover {
+	color: #fbbf24;
+}
+a:active {
+	color: #fbbf24;
+}
+a:focus {
+	color: #fbbf24;
+}
+a:link {
+	color: #fbbf24;
 }
